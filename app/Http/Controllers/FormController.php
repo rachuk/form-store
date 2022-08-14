@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Form;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class FormController extends Controller
 {
+
+    public Form $forms;
+
     public function create()
     {
         return view('create');
-
     }
 
     public function store(Request $request)
@@ -18,15 +22,11 @@ class FormController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:100',
             'email' => 'required|email|max:100',
-            'message' => 'required|max:500',
+            'message' => 'required|max:300',
         ]);
         Form::create($validatedData);
-        return response()->json('Data is successfully stored');
-    }
-
-    public function show()
-    {
-        $posts = Form::all();
-        return view('show',  compact('posts'));
+        $forms = DB::table('forms')->select('name','email', 'message','created_at')->get();
+        return view('show',compact('forms'));
     }
 }
+
